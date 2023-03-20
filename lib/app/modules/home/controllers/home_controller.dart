@@ -1,17 +1,34 @@
 import 'dart:convert';
 
-import 'package:alquran/app/data/models/detailSurah.dart';
+import 'package:alquran/app/constant/color.dart';
 import 'package:alquran/app/data/models/juz.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../data/models/surah.dart';
 
 class HomeController extends GetxController {
   // Buat untuk menampung List dan digunakan membandingkan Surah dalam Juz
-  List<DetailSurah> allSurah = [];
+  List<Surah> allSurah = [];
   RxBool isDark = false.obs;
-  Future<List<DetailSurah>> getAlSurah() async {
+
+  void changeTheme() async {
+    Get.isDarkMode ? Get.changeTheme(themaTerang) : Get.changeTheme(themaGelap);
+    isDark.toggle();
+
+    final box = GetStorage();
+    if (Get.isDarkMode) {
+      // KEY YANG DIGUNAKAN SESUAI KEY YANG ADA DI MAIN DART
+      // dark -> light
+      await box.remove('themeGelap');
+    } else {
+      // light -> dark
+      await box.write('themeGelap', true);
+    }
+  }
+
+  Future<List<Surah>> getAlSurah() async {
     // INI DARI MODEL SURAH
     Uri url = Uri.parse('https://api.quran.gading.dev/surah');
     var res = await http.get(url);
@@ -24,7 +41,7 @@ class HomeController extends GetxController {
       return [];
     } else {
       // isi all surah diatas akan berubah menjadi dari sini
-      allSurah = data.map((e) => DetailSurah.fromJson(e)).toList();
+      allSurah = data.map((e) => Surah.fromJson(e)).toList();
       return allSurah;
     }
   }
@@ -44,6 +61,7 @@ class HomeController extends GetxController {
       // Karena data masi berbentuk list dynamic maka ubah ke bentuk List Map
 
       Juz juz = Juz.fromJson(data);
+
       listJuz.add(juz);
     }
     return listJuz;

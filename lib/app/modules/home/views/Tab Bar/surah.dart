@@ -1,5 +1,5 @@
 import 'package:alquran/app/constant/color.dart';
-import 'package:alquran/app/data/models/detailSurah.dart' as detail;
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,7 +14,7 @@ class SurahTab extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<detail.DetailSurah>>(
+    return FutureBuilder<List<Surah>>(
       future: controller.getAlSurah(),
       // Ubah snapshot agar menjadi list surah
       builder: (context, snapshot) {
@@ -34,7 +34,7 @@ class SurahTab extends GetView<HomeController> {
           itemCount: snapshot.data!.length,
           itemBuilder: (context, index) {
             // Mengambil data
-            detail.DetailSurah surah = snapshot.data![index];
+            Surah surah = snapshot.data![index];
             return ListTile(
               onTap: () {
                 Get.toNamed(Routes.DETAIL_SURAH, arguments: surah);
@@ -54,7 +54,7 @@ class SurahTab extends GetView<HomeController> {
                 ),
               ),
               title: Text(
-                '${surah.name.transliteration.id}',
+                '${surah.name.transliteration?.id}',
               ),
               subtitle: Text(
                 '${surah.numberOfVerses} ayat | ${surah.revelation.id}',

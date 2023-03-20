@@ -1,4 +1,5 @@
 import 'package:alquran/app/data/models/detailSurah.dart' as detail;
+import 'package:alquran/app/data/models/surah.dart';
 
 import 'package:flutter/material.dart';
 
@@ -10,12 +11,12 @@ import '../controllers/detail_surah_controller.dart';
 class DetailSurahView extends GetView<DetailSurahController> {
   DetailSurahView({Key? key}) : super(key: key);
 
-  final detail.DetailSurah surah = Get.arguments;
+  final Surah surah = Get.arguments;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('SURAH ${surah.name.transliteration.id!.toUpperCase()}'),
+        title: Text('SURAH ${surah.name.transliteration?.id!.toUpperCase()}'),
         centerTitle: true,
       ),
       body: ListView(
@@ -96,7 +97,7 @@ class DetailSurahView extends GetView<DetailSurahController> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          surah.name.transliteration.id!,
+                          '${surah.name.transliteration?.id}',
                           style: const TextStyle(
                             fontSize: 30,
                             fontFamily: 'Poppins',
@@ -105,7 +106,7 @@ class DetailSurahView extends GetView<DetailSurahController> {
                           ),
                         ),
                         Text(
-                          surah.name.translation.id!,
+                          "${surah.name.translation?.id!}",
                           style: const TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 16,
@@ -206,7 +207,10 @@ class DetailSurahView extends GetView<DetailSurahController> {
                                       ),
                                     ),
                                     IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        controller
+                                            .playAudio(ayat.audio.primary);
+                                      },
                                       icon: const Icon(
                                         Icons.play_arrow,
                                       ),

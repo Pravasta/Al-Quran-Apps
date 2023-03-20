@@ -1,5 +1,5 @@
-import 'package:alquran/app/data/models/detailSurah.dart' as detail;
 import 'package:alquran/app/data/models/juz.dart' as j;
+import 'package:alquran/app/data/models/surah.dart';
 
 import 'package:flutter/material.dart';
 
@@ -12,13 +12,14 @@ class DetailJuzView extends GetView<DetailJuzController> {
   DetailJuzView({Key? key}) : super(key: key);
 
   final j.Juz detailJuz = Get.arguments['juz'];
-  final List<detail.DetailSurah> allSurahInJuz = Get.arguments['surah'];
+  final List<Surah> allSurahInJuz = Get.arguments['surah'];
 
   @override
   Widget build(BuildContext context) {
     // for (var element in allSurahInJuz) {
     //   print(element.name.transliteration!.id);
     // }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('JUZ ${detailJuz.juz}'),
@@ -48,9 +49,10 @@ class DetailJuzView extends GetView<DetailJuzController> {
           //     controller.index++;
           //   }
           // }
+
           if (index != 0) {
             if (ayat.number.inSurah == 1) {
-              controller.index++;
+              controller.test++;
             }
           }
 
@@ -77,7 +79,7 @@ class DetailJuzView extends GetView<DetailJuzController> {
                             height: 20,
                           ),
                           Text(
-                            '${ayat.tafsir.id.short}',
+                            ayat.tafsir.id.short,
                             textAlign: TextAlign.justify,
                             style: const TextStyle(fontFamily: 'Poppins'),
                           ),
@@ -135,11 +137,7 @@ class DetailJuzView extends GetView<DetailJuzController> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               Text(
-                                allSurahInJuz[controller.index]
-                                        .name
-                                        .transliteration
-                                        .id ??
-                                    '',
+                                '${allSurahInJuz[controller.test.value].name.transliteration?.id}',
                                 style: const TextStyle(
                                   fontSize: 30,
                                   fontFamily: 'Poppins',
@@ -148,7 +146,7 @@ class DetailJuzView extends GetView<DetailJuzController> {
                                 ),
                               ),
                               Text(
-                                "${allSurahInJuz[controller.index].name.translation.id}",
+                                "${allSurahInJuz[controller.test.value].name.translation?.id}",
                                 style: const TextStyle(
                                   fontFamily: 'Poppins',
                                   fontSize: 16,
@@ -164,21 +162,22 @@ class DetailJuzView extends GetView<DetailJuzController> {
                                   ),
                                 ),
                               ),
-                              // Text(
-                              //   '${surah.revelation.id!} || ${surah.numberOfVerses} Ayat ',
-                              //   style: const TextStyle(
-                              //     color: Colors.white,
-                              //     fontFamily: 'Poppins',
-                              //     fontSize: 14,
-                              //   ),
-                              // ),
-                              // Text(
-                              //   '${surah.name.long} ',
-                              //   style: const TextStyle(
-                              //     color: Colors.white,
-                              //     fontSize: 35,
-                              //   ),
-                              // ),
+                              Text(
+                                '${allSurahInJuz[controller.test.value].revelation.id!} || ${allSurahInJuz[controller.test.value].numberOfVerses} Ayat ',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 14,
+                                ),
+                              ),
+                              Text(
+                                '${allSurahInJuz[controller.test.value].name.long} ',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 35,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -216,14 +215,14 @@ class DetailJuzView extends GetView<DetailJuzController> {
                             child:
                                 Center(child: Text('${ayat.number.inSurah}')),
                           ),
-                          Text(
-                            '${allSurahInJuz[controller.index].name.transliteration.id}',
-                            style: const TextStyle(
-                              fontStyle: FontStyle.italic,
-                              fontSize: 15,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
+                          // Text(
+                          //   '${allSurahInJuz[controller.index].name.transliteration.id}',
+                          //   style: const TextStyle(
+                          //     fontStyle: FontStyle.italic,
+                          //     fontSize: 15,
+                          //     fontFamily: 'Poppins',
+                          //   ),
+                          // ),
                         ],
                       ),
                       Row(

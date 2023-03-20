@@ -1,5 +1,4 @@
 import 'package:alquran/app/constant/color.dart';
-import 'package:alquran/app/data/models/detailSurah.dart' as detail;
 import 'package:alquran/app/data/models/juz.dart' as j;
 import 'package:alquran/app/data/models/surah.dart';
 import 'package:alquran/app/routes/app_pages.dart';
@@ -41,19 +40,18 @@ class JuzTab extends GetView<HomeController> {
             String awalSurat = detailJuz.juzStartInfo?.split(' - ').first ?? '';
             String akhirSurat = detailJuz.juzEndInfo?.split(' - ').first ?? '';
 
-            List<detail.DetailSurah> rawAllSurahInJuz = [];
-            List<detail.DetailSurah> allSurahInJuz = [];
+            List<Surah> rawAllSurahInJuz = [];
+            List<Surah> allSurahInJuz = [];
 
-            for (detail.DetailSurah item in controller.allSurah) {
+            for (Surah item in controller.allSurah) {
               rawAllSurahInJuz.add(item);
-              if (item.name.transliteration.id == akhirSurat) {
+              if (item.name.transliteration?.id == akhirSurat) {
                 break;
               }
             }
-            for (detail.DetailSurah item
-                in rawAllSurahInJuz.reversed.toList()) {
+            for (Surah item in rawAllSurahInJuz.reversed.toList()) {
               allSurahInJuz.add(item);
-              if (item.name.transliteration.id == awalSurat) {
+              if (item.name.transliteration?.id == awalSurat) {
                 break;
               }
             }
