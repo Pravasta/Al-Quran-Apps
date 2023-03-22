@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:alquran/app/constant/color.dart';
+import 'package:alquran/app/data/db/bookmark.dart';
 import 'package:alquran/app/data/models/juz.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:sqflite/sqflite.dart';
 
 import '../../../data/models/surah.dart';
 
@@ -12,6 +14,21 @@ class HomeController extends GetxController {
   // Buat untuk menampung List dan digunakan membandingkan Surah dalam Juz
   List<Surah> allSurah = [];
   RxBool isDark = false.obs;
+
+  // Siapkan database
+  DatabaseManager database = DatabaseManager.instance;
+
+  Future<List<Map<String, dynamic>>> getBookmark() async {
+    // ambil db
+    Database db = await database.db;
+    // Karena output dari bookmark di controller adalh map string dynamic maka dibuat list map string agar spesifikasi
+    List<Map<String, dynamic>> dataBookmark = await db.query(
+      'bookmark',
+      where: 'last_read = 0',
+    );
+
+    return dataBookmark;
+  }
 
   void changeTheme() async {
     Get.isDarkMode ? Get.changeTheme(themaTerang) : Get.changeTheme(themaGelap);

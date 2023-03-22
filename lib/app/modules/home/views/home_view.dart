@@ -1,5 +1,6 @@
 import 'package:alquran/app/constant/color.dart';
-import 'package:alquran/app/modules/home/views/Tab%20Bar/juzTab.dart';
+import 'package:alquran/app/modules/home/views/Tab%20Bar/bookmark.dart';
+import 'package:alquran/app/modules/home/views/Tab%20Bar/juztab.dart';
 import 'package:alquran/app/modules/home/views/Tab%20Bar/surah.dart';
 import 'package:alquran/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
@@ -155,9 +156,7 @@ class HomeView extends GetView<HomeController> {
                   children: [
                     SurahTab(),
                     JuzTab(),
-                    Center(
-                      child: Text('Page 3'),
-                    ),
+                    BookmarkClass(),
                   ],
                 ),
               )

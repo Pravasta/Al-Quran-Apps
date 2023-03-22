@@ -16,7 +16,12 @@ class DetailSurahView extends GetView<DetailSurahController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('SURAH ${surah.name.transliteration?.id!.toUpperCase()}'),
+        title: Text(
+          'SURAH ${surah.name.transliteration?.id!.toUpperCase()}',
+          style: const TextStyle(
+            fontFamily: 'Poppins',
+          ),
+        ),
         centerTitle: true,
       ),
       body: ListView(
@@ -35,6 +40,7 @@ class DetailSurahView extends GetView<DetailSurahController> {
                       'Tafsir',
                       style: TextStyle(
                         fontSize: 10,
+                        fontFamily: 'Poppins',
                       ),
                     ),
                     const SizedBox(
@@ -43,26 +49,14 @@ class DetailSurahView extends GetView<DetailSurahController> {
                     Text(
                       '${surah.tafsir.id}',
                       textAlign: TextAlign.justify,
+                      style: const TextStyle(
+                        fontFamily: 'Poppins',
+                      ),
                     ),
                   ],
                 ),
               ),
             )),
-            // onTap: () => Get.defaultDialog(
-            //   backgroundColor:
-            //       Get.isDarkMode ? appPurple.withOpacity(0.5) : Colors.white,
-            //   contentPadding: const EdgeInsets.symmetric(
-            //     vertical: 15,
-            //     horizontal: 30,
-            //   ),
-            //   title: 'Tafsir',
-            //   content: SizedBox(
-            //     child: Text(
-            //       '${surah.tafsir.id}',
-            //       textAlign: TextAlign.justify,
-            //     ),
-            //   ),
-            // ),
             child: Container(
               margin: const EdgeInsets.all(5),
               height: 330,
@@ -135,6 +129,7 @@ class DetailSurahView extends GetView<DetailSurahController> {
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 35,
+                            fontFamily: 'Poppins',
                           ),
                         ),
                       ],
@@ -169,7 +164,6 @@ class DetailSurahView extends GetView<DetailSurahController> {
                     }
                     detail.Verse ayat = snapshot.data!.verses![index];
                     return Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Container(
                           decoration: BoxDecoration(
@@ -198,62 +192,133 @@ class DetailSurahView extends GetView<DetailSurahController> {
                                   child: Center(
                                       child: Text('${ayat.number.inSurah}')),
                                 ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.share,
+                                GetBuilder<DetailSurahController>(
+                                  builder: (c) => Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: const Icon(
+                                          Icons.share,
+                                        ),
                                       ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                        controller
-                                            .playAudio(ayat.audio.primary);
-                                      },
-                                      icon: const Icon(
-                                        Icons.play_arrow,
+                                      (ayat.kondisiAudio == 'stop')
+                                          ? IconButton(
+                                              onPressed: () {
+                                                c.playAudio(ayat);
+                                              },
+                                              icon: const Icon(
+                                                Icons.play_arrow,
+                                              ),
+                                            )
+                                          : Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                (ayat.kondisiAudio == 'playing')
+                                                    ? IconButton(
+                                                        onPressed: () =>
+                                                            c.pauseAudio(ayat),
+                                                        icon: const Icon(
+                                                            Icons.pause),
+                                                      )
+                                                    : IconButton(
+                                                        onPressed: () =>
+                                                            c.resumeAudio(ayat),
+                                                        icon: const Icon(
+                                                            Icons.play_arrow),
+                                                      ),
+                                                IconButton(
+                                                  onPressed: () =>
+                                                      c.stopAudio(ayat),
+                                                  icon: const Icon(Icons.stop),
+                                                ),
+                                              ],
+                                            ),
+                                      IconButton(
+                                        onPressed: () {
+                                          Get.defaultDialog(
+                                            title: 'BOOKMARK',
+                                            middleText:
+                                                'Silahkan pilih bookmark',
+                                            actions: [
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  c.addBookmark(
+                                                    true,
+                                                    snapshot.data!,
+                                                    ayat,
+                                                    index,
+                                                  );
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor: appPurple),
+                                                child: const Text('Last Read'),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  c.addBookmark(
+                                                    false,
+                                                    snapshot.data!,
+                                                    ayat,
+                                                    index,
+                                                  );
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                    backgroundColor: appPurple),
+                                                child: const Text('Bookmark'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                        icon: const Icon(
+                                          Icons.bookmark_outline,
+                                        ),
                                       ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: const Icon(
-                                        Icons.bookmark_outline,
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
                         ),
                         const SizedBox(height: 20),
-                        Text(
-                          ayat.text.arab,
-                          textAlign: TextAlign.end,
-                          style: const TextStyle(
-                            fontSize: 25,
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            ayat.text.arab,
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 25,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Text(
-                          ayat.text.transliteration.en,
-                          textAlign: TextAlign.end,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.italic,
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            ayat.text.transliteration.en,
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 25),
-                        Text(
-                          '${ayat.translation.id}',
-                          textAlign: TextAlign.end,
-                          style: const TextStyle(
-                            fontSize: 16,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '${ayat.translation.id}',
+                            textAlign: TextAlign.start,
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 16,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 40),
+                        const SizedBox(height: 20),
                       ],
                     );
                   },
