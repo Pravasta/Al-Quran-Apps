@@ -12,12 +12,41 @@ import '../../../data/models/surah.dart';
 
 class HomeController extends GetxController {
   // Buat untuk menampung List dan digunakan membandingkan Surah dalam Juz
+
   List<Surah> allSurah = [];
+
+  List<Juz> listJuz = [];
   RxBool isDark = false.obs;
 
   // Siapkan database
   DatabaseManager database = DatabaseManager.instance;
 
+  // Get LastRead di db
+
+  Future<Map<String, dynamic>?> getLastRead() async {
+    Database db = await database.db;
+    List<Map<String, dynamic>> dataLastRead = await db.query(
+      'bookmark',
+      where: 'last_read = 1',
+    );
+    if (dataLastRead.isEmpty) {
+      return null;
+    } else {
+      // ada data dan ambil index ke 0 sebagai data utama
+      return dataLastRead.first;
+    }
+  }
+
+  deleteBookmark(int id) async {
+    // ambil db
+    Database db = await database.db;
+    // Delete dari file bookmark dimana id nya adalah sama dengan id
+    db.delete('bookmark', where: 'id = $id');
+    update();
+    Get.snackbar('Berhasil', 'Berhasil Menghapus');
+  }
+
+  // Fungsi untuk dapatkan bookmark
   Future<List<Map<String, dynamic>>> getBookmark() async {
     // ambil db
     Database db = await database.db;
@@ -25,6 +54,7 @@ class HomeController extends GetxController {
     List<Map<String, dynamic>> dataBookmark = await db.query(
       'bookmark',
       where: 'last_read = 0',
+      orderBy: 'number_surah, via, ayat',
     );
 
     return dataBookmark;
@@ -65,7 +95,6 @@ class HomeController extends GetxController {
 
   // KALAU PAKAI INI MASI ERROR DAN BELUM KTMU SOLUSI NYA
   Future<List<Juz>> getAllJuz() async {
-    List<Juz> listJuz = [];
     // Lopping untuk meng Get semua data
     for (var i = 1; i <= 30; i++) {
       // INI DARI MODEL SURAH

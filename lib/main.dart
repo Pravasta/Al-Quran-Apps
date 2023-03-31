@@ -1,5 +1,4 @@
 import 'package:alquran/app/constant/color.dart';
-import 'package:alquran/app/modules/home/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -12,6 +11,7 @@ void main() async {
 
   runApp(
     GetMaterialApp(
+      // themeMode: ThemeMode.dark,
       theme: box.read('themeGelap') == null ? themaTerang : themaGelap,
       debugShowCheckedModeBanner: false,
       title: "Application",

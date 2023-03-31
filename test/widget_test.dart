@@ -4,7 +4,16 @@ import 'package:alquran/app/data/models/detailSurah.dart' as j;
 
 import 'package:http/http.dart' as http;
 
-// void main() async {
+void main() async {
+  Uri url = Uri.parse('https://api.quran.gading.dev/surah');
+  var res = await http.get(url);
+
+  List data = json.decode(res.body)['data'];
+
+  print(data);
+}
+
+// void main() anc {
 //   // INI DARI MODEL SURAH
 //   Uri url = Uri.parse('https://api.quran.gading.dev/surah');
 //   var res = await http.get(url);
@@ -98,77 +107,77 @@ import 'package:http/http.dart' as http;
   ]
 */
 
-void main() async {
-  // Membuat variabel pembanding dari nilaiu utama nya juz 1
-  int juz = 1;
+// void main() async {
+//   // Membuat variabel pembanding dari nilaiu utama nya juz 1
+//   int juz = 1;
 
-  // List untuk menampung ayat
-  List<Map<String, dynamic>> penampungAyat = [];
-  // Penampung all juz
-  List<Map<String, dynamic>> allJuz = [];
+//   // List untuk menampung ayat
+//   List<Map<String, dynamic>> penampungAyat = [];
+//   // Penampung all juz
+//   List<Map<String, dynamic>> allJuz = [];
 
-  // Lakukan looping tiap surah dalam alquran lalu tambahkan ke variabel penampung sesuai juz nya
+//   // Lakukan looping tiap surah dalam alquran lalu tambahkan ke variabel penampung sesuai juz nya
 
-  for (var i = 1; i <= 114; i++) {
-    var res =
-        await http.get(Uri.parse('https://api.quran.gading.dev/surah/$i'));
-    Map<String, dynamic> rawData = json.decode(res.body)['data'];
-    j.DetailSurah data = j.DetailSurah.fromJson(rawData);
+//   for (var i = 1; i <= 114; i++) {
+//     var res =
+//         await http.get(Uri.parse('https://api.quran.gading.dev/surah/$i'));
+//     Map<String, dynamic> rawData = json.decode(res.body)['data'];
+//     j.DetailSurah data = j.DetailSurah.fromJson(rawData);
 
-    // Baru cek apakah ayat nya null ?
-    if (data.verses != null) {
-      // jika tidak lakukan looping didalam ayat pada data tersebut
-      data.verses?.forEach((ayat) {
-        // Cek jika juz dalam ayat tersebut sudah sama dengan juz, maka tambahkan surah dan ayat yang ada pada looping an
+//     // Baru cek apakah ayat nya null ?
+//     if (data.verses != null) {
+//       // jika tidak lakukan looping didalam ayat pada data tersebut
+//       data.verses?.forEach((ayat) {
+//         // Cek jika juz dalam ayat tersebut sudah sama dengan juz, maka tambahkan surah dan ayat yang ada pada looping an
 
-        if (ayat.meta.juz == juz) {
-          penampungAyat.add({
-            'surah': data.name.transliteration.id,
-            'ayat': ayat,
-          });
-          // kalau sudah diluar juz yang sama maka
-        } else {
-          print('==================');
-          print('Berhasil Memasukkan JUZ $juz');
-          print('Start :');
-          print(
-              'Ayat : ${(penampungAyat[0]['ayat'] as j.Verse).number.inSurah}');
-          print((penampungAyat[0]['ayat'] as j.Verse).text.arab);
-          print('END :');
-          print(
-              'Ayat ${(penampungAyat[penampungAyat.length - 1]['ayat'] as j.Verse).number.inSurah}');
-          print((penampungAyat[penampungAyat.length - 1]['ayat'] as j.Verse)
-              .text
-              .arab);
-          // Jika sudah tambahkan ke dalam tampungan semua juzz
-          allJuz.add({
-            'juz': juz,
-            'start': penampungAyat[0],
-            'end': penampungAyat[penampungAyat.length - 1],
-            'verses': penampungAyat,
-          });
-          // Kalau sudah juzz nya diincrement
-          juz++;
-          // Jangan lupa di clear agar mulai kosong lagi di juz selanjutnya
-          // penampungAyat.clear();
-          penampungAyat = [];
-          // Kenapa tdak clear ? karena clear menghapus semua object
-          penampungAyat.add({
-            'surah': data.name.transliteration.id,
-            'ayat': ayat,
-          });
-        }
-      });
-    }
-    print('==================');
-    print('Berhasil Memasukkan JUZ $juz');
-    print('Start :');
-    print('Ayat : ${(penampungAyat[0]['ayat'] as j.Verse).number.inSurah}');
-    print((penampungAyat[0]['ayat'] as j.Verse).text.arab);
-    print('END :');
-    print(
-        'Ayat ${(penampungAyat[penampungAyat.length - 1]['ayat'] as j.Verse).number.inSurah}');
-    print(
-        (penampungAyat[penampungAyat.length - 1]['ayat'] as j.Verse).text.arab);
-  }
-}
+//         if (ayat.meta.juz == juz) {
+//           penampungAyat.add({
+//             'surah': data.name.transliteration.id,
+//             'ayat': ayat,
+//           });
+//           // kalau sudah diluar juz yang sama maka
+//         } else {
+//           print('==================');
+//           print('Berhasil Memasukkan JUZ $juz');
+//           print('Start :');
+//           print(
+//               'Ayat : ${(penampungAyat[0]['ayat'] as j.Verse).number.inSurah}');
+//           print((penampungAyat[0]['ayat'] as j.Verse).text.arab);
+//           print('END :');
+//           print(
+//               'Ayat ${(penampungAyat[penampungAyat.length - 1]['ayat'] as j.Verse).number.inSurah}');
+//           print((penampungAyat[penampungAyat.length - 1]['ayat'] as j.Verse)
+//               .text
+//               .arab);
+//           // Jika sudah tambahkan ke dalam tampungan semua juzz
+//           allJuz.add({
+//             'juz': juz,
+//             'start': penampungAyat[0],
+//             'end': penampungAyat[penampungAyat.length - 1],
+//             'verses': penampungAyat,
+//           });
+//           // Kalau sudah juzz nya diincrement
+//           juz++;
+//           // Jangan lupa di clear agar mulai kosong lagi di juz selanjutnya
+//           // penampungAyat.clear();
+//           penampungAyat = [];
+//           // Kenapa tdak clear ? karena clear menghapus semua object
+//           penampungAyat.add({
+//             'surah': data.name.transliteration.id,
+//             'ayat': ayat,
+//           });
+//         }
+//       });
+//     }
+//     print('==================');
+//     print('Berhasil Memasukkan JUZ $juz');
+//     print('Start :');
+//     print('Ayat : ${(penampungAyat[0]['ayat'] as j.Verse).number.inSurah}');
+//     print((penampungAyat[0]['ayat'] as j.Verse).text.arab);
+//     print('END :');
+//     print(
+//         'Ayat ${(penampungAyat[penampungAyat.length - 1]['ayat'] as j.Verse).number.inSurah}');
+//     print(
+//         (penampungAyat[penampungAyat.length - 1]['ayat'] as j.Verse).text.arab);
+//   }
+// }

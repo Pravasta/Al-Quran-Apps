@@ -1,8 +1,12 @@
+import 'package:alquran/app/constant/color.dart';
+import 'package:alquran/app/data/models/juz.dart' as j;
+import 'package:alquran/app/data/models/surah.dart';
 import 'package:alquran/app/modules/home/controllers/home_controller.dart';
+import 'package:alquran/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class BookmarkClass extends StatelessWidget {
+class BookmarkClass extends GetView<HomeController> {
   const BookmarkClass({super.key});
 
   @override
@@ -33,7 +37,25 @@ class BookmarkClass extends StatelessWidget {
               itemBuilder: (context, index) {
                 Map<String, dynamic> data = snapshot.data![index];
                 return ListTile(
-                  onTap: () => print(data),
+                  onTap: () {
+                    switch (data['via']) {
+                      case 'juz':
+                        print('GO TO JUS');
+                        // Get.toNamed(Routes.DETAIL_JUZ, arguments: {
+                        //   'juz': detailJuz,
+                        //   'surah': allSurahInJuz,
+                        //   'bookmark': data,
+                        // });
+                        break;
+                      default:
+                        Get.toNamed(Routes.DETAIL_SURAH, arguments: {
+                          'name': data['surah'].toString().replaceAll('+', "'"),
+                          'number': data['number_surah'],
+                          // Membawa data lengkap dari bookmark juga
+                          'bookmark': data,
+                        });
+                    }
+                  },
                   leading: Container(
                     margin: const EdgeInsets.only(right: 15),
                     height: 50,
@@ -46,12 +68,22 @@ class BookmarkClass extends StatelessWidget {
                     child: Center(child: Text('${index + 1}')),
                   ),
                   title: Text(
-                    '${data['surah']}',
+                    // Ubah replace all lagi agar tanda + di database berubah menjadi tanda kutip lagi
+                    data['surah'].toString().replaceAll("+", "'"),
                     style: const TextStyle(fontFamily: 'Poppins'),
                   ),
                   subtitle: Text(
                     'Ayat ${data['ayat']} - via ${data['via']}',
-                    style: const TextStyle(fontFamily: 'Poppins'),
+                    style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      color: appGrey,
+                    ),
+                  ),
+                  trailing: IconButton(
+                    onPressed: () {
+                      c.deleteBookmark(data['id']);
+                    },
+                    icon: const Icon(Icons.delete),
                   ),
                 );
               },

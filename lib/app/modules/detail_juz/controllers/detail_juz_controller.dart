@@ -1,6 +1,10 @@
+import 'package:alquran/app/data/models/surah.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:sqflite/sqflite.dart';
 
+import '../../../data/db/bookmark.dart';
 import '../../../data/models/juz.dart';
 
 class DetailJuzController extends GetxController {
@@ -12,6 +16,85 @@ class DetailJuzController extends GetxController {
 
   // untuk menyimpan LasPlay audio - Nilai awal null
   Verse? lastVerse;
+
+  // Panggil database
+  DatabaseManager database = DatabaseManager.instance;
+
+  // Void add bookmark
+
+  Future<void> addBookmark(
+      bool lastRead, Surah surah, Verse ayat, int indexAyat) async {
+    // ambil database
+    Database db = await database.db;
+
+    // Apakah isi pertama = false
+    bool flagExist = false;
+
+    // Mengatasi tumpukan last_read yang salah
+    if (lastRead == true) {
+      await db.delete('bookmark', where: 'last_read = 1');
+    } else {
+      List checkData = await db.query(
+        'bookmark',
+        // Columns untuk checkdata yang diutamakan hanya yang ada dalam column, jadi ID tidak akan ikut ke cek
+        columns: [
+          'surah',
+          'ayat',
+          'number_surah',
+          'juz',
+          'via',
+          'index_ayat',
+          'last_read'
+        ],
+        where:
+            "surah = '${surah.name.transliteration?.id?.replaceAll("'", "+")}' and ayat = ${ayat.number.inSurah} and number_surah = ${surah.number} and juz = ${ayat.meta.juz} and via = 'juz' and index_ayat = $indexAyat and last_read = 0",
+      );
+      print('DIJALANKAN');
+      print(checkData);
+      // Jika checkdata != 0 maka ada datanyaa yang udh di bookmark / last read
+      if (checkData.isNotEmpty) {
+        // Ada data - kalau ada berarti flagExist diubah ke true
+        flagExist = true;
+      }
+    }
+    // Lalu putuskan apakah mau dieksekusi lagi atau tidak
+    if (flagExist == false) {
+      // Simpan ke tabble bookmark dan value nya sesuai data yang ada di database manager kita
+      await db.insert(
+        'bookmark',
+        {
+          // id sudah jelas bakal incemeetn sendiri
+          // Dibawahnya ambil dari lemparan data dari view
+          'surah': '${surah.name.transliteration?.id?.replaceAll("'", "+")}',
+          // Replace toAll untuk mengatasi sqflite yang gagal membaca tanda kutip 1. Diubah ke + hanya berlaku di database
+          // Untuk di FE nya akan menggunakan replace all lagi agar berubah menajdi tanda kutip satu lagi seperti nama usrah al quran
+          'ayat': ayat.number.inSurah,
+          'number_surah': surah.number,
+          'juz': ayat.meta.juz,
+          'via': 'juz',
+          'index_ayat': indexAyat,
+          // Kalau lastreaad nya true, pilih angka 1 kalau tidak angka 0
+          'last_read': lastRead == true ? 1 : 0,
+        },
+      );
+
+      // Tutup dialog nya
+      Get.back();
+      // dan tampilkan snackbar
+      Get.snackbar('Berhasil', 'Berhasil menambahkan bookmark',
+          colorText: Colors.white);
+    } else {
+      Get.back();
+      // dan tampilkan snackbar
+      Get.snackbar('Terjadi kesalahaan', 'Bookmark sudah ada',
+          colorText: Colors.white);
+    }
+
+    // coba print data apkah masuk
+    var data = await db.query('bookmark');
+    // query itu selecr ftom database nya
+    print(data);
+  }
 
   // Jembatan audio player dari package
   final player = AudioPlayer();

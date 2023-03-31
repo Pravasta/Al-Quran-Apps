@@ -37,7 +37,14 @@ class SurahTab extends GetView<HomeController> {
             Surah surah = snapshot.data![index];
             return ListTile(
               onTap: () {
-                Get.toNamed(Routes.DETAIL_SURAH, arguments: surah);
+                // Kalau argument ang dikirim berupa surah memang tidak masalah, tpi akan berbeda hasil jika digunakan dalam bookmark
+                // Karena dalam API surah tidak lah detail, Sedangkan dalam detail surah sudah detail
+                // Jadi bagi bookmark dia tidak akan memiliki parameter lengkap untuk menggunakan scroll to index
+                // Get.toNamed(Routes.DETAIL_SURAH, arguments: surah);
+                Get.toNamed(Routes.DETAIL_SURAH, arguments: {
+                  'name': surah.name.transliteration!.id,
+                  'number': surah.number,
+                });
               },
               leading: Container(
                 width: 40,

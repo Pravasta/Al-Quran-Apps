@@ -6,12 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DetailSurahController extends GetxController {
+  // final homeC = Get.find<HomeController>();
   // Mengatur Play Stop Resume audio
   // RxString kondisiAudio = 'stop'.obs;
   // Pindah kan ke model agar dapat di play satu satu
+
+  AutoScrollController scrollC = AutoScrollController();
 
   // untuk menyimpan LasPlay audio - Nilai awal null
   Verse? lastVerse;
@@ -19,8 +23,8 @@ class DetailSurahController extends GetxController {
   // Panggil database
   DatabaseManager database = DatabaseManager.instance;
 
-  // Void bookmark
-  void addBookmark(
+  // Void add bookmark
+  Future<void> addBookmark(
       bool lastRead, DetailSurah surah, Verse ayat, int indexAyat) async {
     // ambil database
     Database db = await database.db;
@@ -34,8 +38,18 @@ class DetailSurahController extends GetxController {
     } else {
       List checkData = await db.query(
         'bookmark',
+        // Columns untuk checkdata yang diutamakan hanya yang ada dalam column, jadi ID tidak akan ikut ke cek
+        columns: [
+          'surah',
+          'ayat',
+          'number_surah',
+          'juz',
+          'via',
+          'index_ayat',
+          'last_read'
+        ],
         where:
-            'surah = "${surah.name.transliteration.id}" and ayat = ${ayat.number.inSurah} and juz = ${ayat.meta.juz} and via = "surah" and index_ayat = $indexAyat and last_read = 0',
+            "surah = '${surah.name.transliteration.id?.replaceAll("'", "+")}' and ayat = ${ayat.number.inSurah} and number_surah = ${surah.number} and juz = ${ayat.meta.juz} and via = 'surah' and index_ayat = $indexAyat and last_read = 0",
       );
       print('DIJALANKAN');
       print(checkData);
@@ -53,8 +67,11 @@ class DetailSurahController extends GetxController {
         {
           // id sudah jelas bakal incemeetn sendiri
           // Dibawahnya ambil dari lemparan data dari view
-          'surah': '${surah.name.transliteration.id}',
+          'surah': '${surah.name.transliteration.id?.replaceAll("'", "+")}',
+          // Replace toAll untuk mengatasi sqflite yang gagal membaca tanda kutip 1. Diubah ke + hanya berlaku di database
+          // Untuk di FE nya akan menggunakan replace all lagi agar berubah menajdi tanda kutip satu lagi seperti nama usrah al quran
           'ayat': ayat.number.inSurah,
+          'number_surah': surah.number,
           'juz': ayat.meta.juz,
           'via': 'surah',
           'index_ayat': indexAyat,
@@ -65,6 +82,10 @@ class DetailSurahController extends GetxController {
 
       // Tutup dialog nya
       Get.back();
+
+      // trigger update dari get builder di home view, tpi tidak disarankan karena ada controller di dalam controller
+      // homeC.update();
+
       // dan tampilkan snackbar
       Get.snackbar('Berhasil', 'Berhasil menambahkan bookmark',
           colorText: Colors.white);

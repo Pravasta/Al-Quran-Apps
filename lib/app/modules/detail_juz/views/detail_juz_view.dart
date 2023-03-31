@@ -1,5 +1,6 @@
 import 'package:alquran/app/data/models/juz.dart' as j;
 import 'package:alquran/app/data/models/surah.dart';
+import 'package:alquran/app/modules/home/controllers/home_controller.dart';
 
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,7 @@ class DetailJuzView extends GetView<DetailJuzController> {
 
   final j.Juz detailJuz = Get.arguments['juz'];
   final List<Surah> allSurahInJuz = Get.arguments['surah'];
+  final homeC = Get.find<HomeController>();
 
   @override
   Widget build(BuildContext context) {
@@ -272,7 +274,43 @@ class DetailJuzView extends GetView<DetailJuzController> {
                                         ],
                                       ),
                                 IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Get.defaultDialog(
+                                      title: 'BOOKMARK',
+                                      middleText: 'Silahkan pilih bookmark',
+                                      actions: [
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            await c.addBookmark(
+                                              true,
+                                              allSurahInJuz[
+                                                  controller.test.value],
+                                              ayat,
+                                              index,
+                                            );
+                                            homeC.update();
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: appPurple),
+                                          child: const Text('Last Read'),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            c.addBookmark(
+                                              false,
+                                              allSurahInJuz[
+                                                  controller.test.value],
+                                              ayat,
+                                              index,
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: appPurple),
+                                          child: const Text('Bookmark'),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                   icon: const Icon(
                                     Icons.bookmark_outline,
                                   ),
